@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 
-const clientRecords = [
+export const clientRecords = [
   {
     filename: "11.jpeg",
     label: "Government of Maharashtra",
@@ -252,7 +252,7 @@ function ClientPage({ onNavigateHome }) {
                   aria-label={`Open official site for ${client.label}`}
                   key={client.filename}
                 >
-                  <img src={client.src} alt={client.label} />
+                  <img src={client.src} alt={client.label} loading={index < 4 ? "eager" : "lazy"} decoding="async" />
                   <span>{String(index + 1).padStart(2, "0")}</span>
                 </a>
               ))}
@@ -288,7 +288,7 @@ function ClientPage({ onNavigateHome }) {
                 key={client.filename}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>
-                <img src={client.src} alt={client.label} />
+                <img src={client.src} alt={client.label} loading="lazy" decoding="async" />
                 <small>Official site</small>
               </a>
             ))}

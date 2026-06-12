@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, LazyMotion, domAnimation, m, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -21,58 +22,119 @@ import {
   Monitor,
   Phone,
   PlayCircle,
-  Plus,
   Quote,
-  Send,
   ShieldCheck,
   Sparkles,
   Star,
   Store,
-  Sun,
   Users,
   Wind,
   Wrench,
   X,
 } from "lucide-react";
 import AboutPage from "./AboutPage.jsx";
-import ClientPage from "./ClientPage.jsx";
+import AchievementPage from "./AchievementPage.jsx";
+import ClientPage, { clientRecords } from "./ClientPage.jsx";
+import GalleryPage from "./GalleryPage.jsx";
 import ProductPage from "./ProductPage.jsx";
 import { productPages, productPageList } from "./productPages.js";
+import {
+  carouselItemVariants,
+  footerRevealVariants,
+  heroContainerVariants,
+  heroItemVariants,
+  heroVisualVariants,
+  navbarVariants,
+  pageTransitionVariants,
+  viewportOnce,
+} from "./utils/animations.js";
 
-function WhatsAppIcon({ size = 24, ...props }) {
+const getCountParts = (value) => {
+  const match = value.match(/(\d+)/);
+  if (!match) {
+    return { prefix: "", number: 0, suffix: value };
+  }
+
+  return {
+    prefix: value.slice(0, match.index),
+    number: Number(match[1]),
+    suffix: value.slice(match.index + match[1].length),
+  };
+};
+
+function CountValue({ value, active = true }) {
+  const { prefix, number, suffix } = getCountParts(value);
+  const [displayValue, setDisplayValue] = useState(active ? number : 0);
+
+  useEffect(() => {
+    if (!active) return undefined;
+
+    const duration = Math.min(2600, Math.max(1400, number * 3.2));
+    const startTime = window.performance.now();
+    let frameId;
+
+    const tick = (time) => {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setDisplayValue(Math.round(number * eased));
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    frameId = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [active, number, value]);
+
   return (
-    <svg
-      aria-hidden="true"
-      fill="currentColor"
-      focusable="false"
-      height={size}
-      viewBox="0 0 24 24"
-      width={size}
-      {...props}
-    >
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884a9.821 9.821 0 0 1 6.988 2.895 9.825 9.825 0 0 1 2.89 6.993c-.003 5.45-4.437 9.884-9.882 9.889m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.335.157 11.893c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.654a11.882 11.882 0 0 0 5.689 1.448h.005c6.558 0 11.894-5.335 11.897-11.893a11.821 11.821 0 0 0-3.488-8.413Z" />
+    <>
+      {prefix}
+      {displayValue}
+      {suffix}
+    </>
+  );
+}
+
+function WhatsAppIcon({ size = 22 }) {
+  return (
+    <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.05 2a9.9 9.9 0 0 0-8.48 15.02L2.5 21.5l4.6-1.04A9.9 9.9 0 1 0 12.05 2Zm0 1.86a8.04 8.04 0 0 1 0 16.08 7.98 7.98 0 0 1-4.16-1.16l-.34-.2-2.33.53.55-2.25-.23-.36a8.04 8.04 0 0 1 6.51-12.64Zm-3.45 4.3c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.66 2.66 4.11 3.62 2.03.8 2.44.64 2.88.6.44-.04 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19-.71-.63-1.19-1.42-1.33-1.66-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.41-.54-.42h-.46Z" />
     </svg>
   );
 }
+
+const heroBackgroundImage = "/media/hero/smartbuddy-premium-hero-reference.png";
 
 const heroSlides = [
   {
     eyebrow: "Original Equipment Manufacturer",
     title: "Ideas engineered into reality.",
     text: "Smart Buddy manufactures special purpose machines for the hygiene sector, including public sanitation, waste treatment, recycling, kiosks, and hygiene-support systems.",
-    image: "/media/hero/smartbuddy-home-sanitation-block.jpeg",
+    image: "/media/hero/smartbuddy-hero-ranchi-green-eco-toilet.jpg",
   },
   {
     eyebrow: "Electronic ECO Toilet",
     title: "Self-cleaning public toilets for high-footfall places.",
     text: "E2T toilets support automatic flushing, pre-flush, floor and wall cleaning, smart access, backup systems, monitoring, and women-friendly hygiene options.",
-    image: "/media/hero/smartbuddy-home-eco-toilet.png",
+    image: "/media/hero/smartbuddy-hero-ranchi-twin-eco-toilet.jpg",
   },
   {
-    eyebrow: "Bio-Digester technology",
-    title: "On-site waste treatment without major infrastructure.",
-    text: "Anaerobic bio-digestion uses AMI / DRDO bacteria and a Bio-Digester Tank to break waste into water, carbon dioxide, and methane.",
-    image: "/media/hero/smartbuddy-home-park-installation.jpeg",
+    eyebrow: "Smart public sanitation",
+    title: "Compact hygiene systems for modern public spaces.",
+    text: "Smart Buddy ECO Toilet installations are designed for gardens, public facilities, campuses, commercial areas, and municipal locations.",
+    image: "/media/hero/smartbuddy-hero-green-blue-eco-toilet.jpg",
+  },
+  {
+    eyebrow: "Municipal-ready installations",
+    title: "Reliable toilet blocks for local bodies and public projects.",
+    text: "Our sanitation units support practical deployment with clear access, strong branding, clean utility panels, and dependable day-to-day operation.",
+    image: "/media/hero/smartbuddy-hero-byndoor-eco-toilet.jpg",
+  },
+  {
+    eyebrow: "High-footfall hygiene",
+    title: "Scalable public toilet infrastructure built for real sites.",
+    text: "From single units to multi-cabin installations, Smart Buddy delivers clean, maintainable, and site-ready sanitation systems.",
+    image: "/media/hero/smartbuddy-hero-coastal-eco-toilet-block.jpg",
   },
 ];
 
@@ -87,17 +149,6 @@ const products = [
     image: "/media/products/electronic-eco-toilet-new.png",
     pageSlug: "electronic-eco-toilet",
     features: ["Water saving", "IoT monitoring and SMS intimation", "24x7 surveillance with voice assistance"],
-  },
-  {
-    title: "Portable FRP Toilet",
-    short: "Portable FRP sanitation cabins with rugged, corrosion-free construction and overhead tank options.",
-    text: "Portable FRP toilets are built for highways, malls, airports, railway stations, tourist places, Smart City locations, events, and site-based sanitation.",
-    icon: Building2,
-    tag: "Portable sanitation",
-    accent: "mint",
-    image: "/media/products/portable-frp-toilet-garden-new.jpeg",
-    pageSlug: "portable-frp-toilet",
-    features: ["Portable", "Unbreakable and long lasting", "Single seater, two seater, and urinal variants"],
   },
   {
     title: "Bio-Digester",
@@ -145,23 +196,52 @@ const products = [
   },
 ];
 
-const bioFeatures = [
-  { icon: Leaf, label: "Zero-waste process" },
-  { icon: Droplets, label: "Non-toxic effluent" },
-  { icon: Wrench, label: "No de-sludging" },
-  { icon: Wind, label: "No foul smell" },
-  { icon: Globe2, label: "No sewerage network or STP" },
-];
-
-const bioSpecifications = [
-  ["Technology", "Anaerobic bio-digestion"],
-  ["Bacteria", "AMI / DRDO bacteria"],
-  ["Tank", "Bio-Digester Tank"],
-  ["Installation", "Above or below ground"],
-  ["Infrastructure", "No sewerage network or STP"],
-  ["Output", "Water, CO2 and methane"],
-  ["Pathogen reduction", "More than 99%"],
-  ["Maintenance", "No moving parts"],
+const solutionJourneys = [
+  {
+    label: "Public hygiene",
+    title: "Cleaner high-footfall access points",
+    text: "For gardens, transit areas, campuses, civic spaces, and public toilets that need dependable daily operation.",
+    pageSlug: "electronic-eco-toilet",
+    icon: Droplets,
+    image: "/media/products/electronic-eco-toilet-new.png",
+    points: ["Self-cleaning", "IoT-ready", "Water conscious"],
+  },
+  {
+    label: "Waste treatment",
+    title: "On-site sanitation without heavy civil work",
+    text: "Bio-digestion helps sites treat human waste locally when sewerage networks or STP access are limited.",
+    pageSlug: "bio-digester",
+    icon: Leaf,
+    image: "/media/products/bio-digester-new.png",
+    points: ["No STP dependency", "Low maintenance", "Zero-waste process"],
+  },
+  {
+    label: "Composting",
+    title: "Convert organic waste into compost",
+    text: "Compact machines for institutions and communities that want a cleaner biodegradable waste workflow.",
+    pageSlug: "organic-waste-composter",
+    icon: Wind,
+    image: "/media/products/organic-waste-composter-new.png",
+    points: ["24-36 hours", "Odour controlled", "Scalable capacity"],
+  },
+  {
+    label: "Recycling",
+    title: "Reward-led bottle collection",
+    text: "Smart recycling points for PET bottles, cans, and Tetra Pak waste with traceable public participation.",
+    pageSlug: "pet-bottle-shredder",
+    icon: Store,
+    image: "/media/products/pet-bottle-rvm-new.png",
+    points: ["Touch screen", "Cashback ready", "Live tracking"],
+  },
+  {
+    label: "Digital access",
+    title: "Public service kiosk workflows",
+    text: "Special-purpose kiosk formats for institutions that need clean, guided, machine-led access points.",
+    pageSlug: "computer-kiosk",
+    icon: Monitor,
+    image: "/media/products/computer-health-kiosk-new.png",
+    points: ["Configurable", "Public-use format", "Service access"],
+  },
 ];
 
 const stats = [
@@ -192,10 +272,22 @@ const testimonials = [
   },
 ];
 
-const clientLogos = Array.from({ length: 8 }, (_, index) => {
+const homeClientLogos = Array.from({ length: 8 }, (_, index) => {
   const filenames = ["1_1.png", "2.png", "3_1.png", "4.png", "5.png", "6.png", "7.png", "8.png"];
   return { src: `/images/${filenames[index]}`, alt: `Client partner ${index + 1}` };
 });
+
+const clientLogos = [
+  ...homeClientLogos,
+  ...clientRecords.map((client) => ({ src: client.src, alt: client.label })),
+];
+
+const clientLogoOffset = Math.ceil(clientLogos.length / 2);
+
+const clientLogoRows = [
+  clientLogos,
+  [...clientLogos.slice(clientLogoOffset), ...clientLogos.slice(0, clientLogoOffset)],
+];
 
 const galleryFilters = ["All", "Bio Toilets", "Eco Toilets", "Utility Kiosks", "Technology"];
 
@@ -254,24 +346,11 @@ const galleryItems = [
 
 const navLinks = [
   ["Home", "home"],
-  ["Solutions", "solutions"],
   ["About", "about"],
   ["Achievements", "achievements"],
+  ["Gallery", "gallery"],
   ["Clients", "clients"],
   ["Contact", "contact"],
-];
-
-const initialChatMessages = [
-  {
-    role: "assistant",
-    text: "Hello. I can help you find the right Smart Buddy solution or connect you with our team.",
-  },
-];
-
-const chatPrompts = [
-  { label: "Find a solution", message: "Help me find the right solution." },
-  { label: "Request a quote", message: "I would like to request a quote." },
-  { label: "Talk to the team", message: "I want to talk to your team." },
 ];
 
 const getProductSlugFromHash = () => {
@@ -282,49 +361,8 @@ const getProductSlugFromHash = () => {
 
 const getClientRouteFromHash = () => /^#\/clients\/?$/.test(window.location.hash);
 const getAboutRouteFromHash = () => /^#\/about\/?$/.test(window.location.hash);
-
-const getChatReply = (message) => {
-  const normalized = message.toLowerCase();
-
-  if (normalized.includes("quote") || normalized.includes("price") || normalized.includes("cost")) {
-    return "For an accurate quote, our team will need your location, expected usage, and preferred product. You can share the details on WhatsApp for a quick response.";
-  }
-
-  if (normalized.includes("bio") || normalized.includes("toilet") || normalized.includes("sanitation")) {
-    return "For public sanitation, Electronic ECO Toilet, Portable FRP Toilet, and Bio-Digester are the best starting points. Tell me whether your site is a highway, mall, airport, railway station, tourist place, Smart City location, or another public site.";
-  }
-
-  if (normalized.includes("kiosk") || normalized.includes("computer") || normalized.includes("digital")) {
-    return "Computer Kiosk is part of the Smart Buddy special purpose machine range. Our team can help you select a kiosk configuration for your public or institutional workflow.";
-  }
-
-  if (normalized.includes("waste") || normalized.includes("compost")) {
-    return "The Organic Waste Composter processes biodegradable waste into compost within approximately 24-36 hours, with models from 25 kg/day to 2000 kg/day.";
-  }
-
-  if (normalized.includes("pet") || normalized.includes("bottle") || normalized.includes("recycle") || normalized.includes("shredder") || normalized.includes("rvm")) {
-    return "The PET Bottle Shredder and Reverse Vending Machine handles PET bottles, aluminium cans, and Tetra Pak waste with touch screen, e-wallet cashback, cloud control, IoT, and live tracking.";
-  }
-
-  if (normalized.includes("frp") || normalized.includes("portable")) {
-    return "Portable FRP Toilets are available as single seater, two seater, and urinal variants with rugged, corrosion-free, tamper-proof construction and overhead tank support.";
-  }
-
-  if (
-    normalized.includes("team") ||
-    normalized.includes("contact") ||
-    normalized.includes("call") ||
-    normalized.includes("whatsapp")
-  ) {
-    return "Our team is ready to help. Use the WhatsApp button below for a quick conversation, or call us at +91 8806796868 / +91 9923810197.";
-  }
-
-  if (normalized.includes("solution") || normalized.includes("help")) {
-    return "Certainly. Tell me what you need help with: Electronic ECO Toilet, Portable FRP Toilet, Bio-Digester, Organic Waste Composter, PET Bottle Shredder, or Computer Kiosk.";
-  }
-
-  return "Thanks for your message. For the best recommendation, please tell me your requirement, project location, and expected daily usage.";
-};
+const getAchievementRouteFromHash = () => /^#\/achievements\/?$/.test(window.location.hash);
+const getGalleryRouteFromHash = () => /^#\/gallery\/?$/.test(window.location.hash);
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -332,24 +370,75 @@ function App() {
   const [activeProductSlug, setActiveProductSlug] = useState(() => getProductSlugFromHash());
   const [activeClientPage, setActiveClientPage] = useState(() => getClientRouteFromHash());
   const [activeAboutPage, setActiveAboutPage] = useState(() => getAboutRouteFromHash());
+  const [activeAchievementPage, setActiveAchievementPage] = useState(() => getAchievementRouteFromHash());
+  const [activeGalleryPage, setActiveGalleryPage] = useState(() => getGalleryRouteFromHash());
   const [heroIndex, setHeroIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [testimonialPaused, setTestimonialPaused] = useState(false);
+  const [siteLoading, setSiteLoading] = useState(true);
+  const [loaderVisible, setLoaderVisible] = useState(true);
+  const [loaderProgress, setLoaderProgress] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("home");
   const [mailReady, setMailReady] = useState(false);
-  const [actionsOpen, setActionsOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState(initialChatMessages);
   const [activeGalleryFilter, setActiveGalleryFilter] = useState("All");
-  const chatEndRef = useRef(null);
+  const [statsActive, setStatsActive] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const productMenuRef = useRef(null);
   const productMenuButtonRef = useRef(null);
+  const statsGridRef = useRef(null);
   const activeProductPage = activeProductSlug ? productPages[activeProductSlug] : null;
   const visibleGalleryItems = galleryItems.filter((item) => activeGalleryFilter === "All" || item.category === activeGalleryFilter);
+  const currentPageKey = activeProductPage
+    ? `product-${activeProductSlug}`
+    : activeClientPage
+      ? "clients"
+      : activeAboutPage
+        ? "about"
+        : activeAchievementPage
+          ? "achievements"
+          : activeGalleryPage
+            ? "gallery"
+            : "home";
+  const motionInitial = prefersReducedMotion ? false : "hidden";
+
+  useEffect(() => {
+    let progressTimer;
+    let finishTimer;
+    let removeTimer;
+    const duration = 2200;
+    const startTime = window.performance.now();
+
+    const easeOutQuart = (value) => 1 - Math.pow(1 - value, 4);
+
+    const updateProgress = () => {
+      const elapsed = window.performance.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const nextProgress = Math.min(96, Math.round(easeOutQuart(progress) * 96));
+      setLoaderProgress(nextProgress);
+
+      if (progress >= 1) {
+        window.clearInterval(progressTimer);
+        setLoaderProgress(100);
+        finishTimer = window.setTimeout(() => {
+          setSiteLoading(false);
+          removeTimer = window.setTimeout(() => setLoaderVisible(false), 700);
+        }, 180);
+      }
+    };
+
+    progressTimer = window.setInterval(updateProgress, 80);
+    updateProgress();
+
+    return () => {
+      window.clearInterval(progressTimer);
+      window.clearTimeout(finishTimer);
+      window.clearTimeout(removeTimer);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -357,6 +446,18 @@ function App() {
     }, 6500);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (testimonialPaused || reducedMotion || activeProductPage || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage) {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      setTestimonialIndex((current) => (current + 1) % testimonials.length);
+    }, 4800);
+    return () => window.clearInterval(timer);
+  }, [activeAboutPage, activeAchievementPage, activeClientPage, activeGalleryPage, activeProductPage, testimonialPaused]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -367,7 +468,7 @@ function App() {
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, [activeProductSlug, activeClientPage, activeAboutPage]);
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
 
   useEffect(() => {
     const sections = document.querySelectorAll("main section[id]");
@@ -383,38 +484,92 @@ function App() {
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [activeProductSlug, activeClientPage, activeAboutPage]);
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
 
   useEffect(() => {
-    const revealElements = document.querySelectorAll("[data-reveal]");
+    const getRevealElements = () => Array.from(document.querySelectorAll("[data-reveal]"));
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.documentElement.classList.add("motion-ready");
 
+    const revealElement = (element) => {
+      element.classList.add("is-visible");
+    };
+
     if (reducedMotion || !("IntersectionObserver" in window)) {
-      revealElements.forEach((element) => element.classList.add("is-visible"));
-      return undefined;
+      const revealAll = () => getRevealElements().forEach(revealElement);
+      const frameId = window.requestAnimationFrame(revealAll);
+      const fallbackTimers = [320, 900].map((delay) => window.setTimeout(revealAll, delay));
+
+      return () => {
+        window.cancelAnimationFrame(frameId);
+        fallbackTimers.forEach((timer) => window.clearTimeout(timer));
+      };
     }
+
+    const isInCurrentViewport = (element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.bottom > 0 && rect.top < window.innerHeight * 0.96;
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            revealElement(entry.target);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12 },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
     );
-    revealElements.forEach((element) => observer.observe(element));
+
+    const registerRevealElements = () => {
+      getRevealElements().forEach((element) => {
+        if (element.classList.contains("is-visible")) return;
+
+        observer.observe(element);
+
+        if (isInCurrentViewport(element)) {
+          revealElement(element);
+          observer.unobserve(element);
+        }
+      });
+    };
+
+    const frameId = window.requestAnimationFrame(registerRevealElements);
+    const fallbackTimers = [180, 420, 900, 1600].map((delay) => window.setTimeout(registerRevealElements, delay));
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      fallbackTimers.forEach((timer) => window.clearTimeout(timer));
+      observer.disconnect();
+    };
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, testimonialIndex]);
+
+  useEffect(() => {
+    if (!statsGridRef.current || statsActive) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsActive(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(statsGridRef.current);
     return () => observer.disconnect();
-  }, [activeProductSlug, activeClientPage, activeAboutPage, testimonialIndex]);
+  }, [activeAboutPage, activeAchievementPage, activeClientPage, activeGalleryPage, activeProductPage, statsActive]);
 
   useEffect(() => {
     const syncRoute = () => {
       setActiveProductSlug(getProductSlugFromHash());
       setActiveClientPage(getClientRouteFromHash());
       setActiveAboutPage(getAboutRouteFromHash());
+      setActiveAchievementPage(getAchievementRouteFromHash());
+      setActiveGalleryPage(getGalleryRouteFromHash());
       setMenuOpen(false);
       setProductMenuOpen(false);
     };
@@ -434,9 +589,13 @@ function App() {
         ? "Clients | Smart Buddy"
         : activeAboutPage
           ? "About | Smart Buddy"
-      : "Smart Buddy | Aarya Innovtech";
+          : activeAchievementPage
+            ? "Achievements | Smart Buddy"
+            : activeGalleryPage
+              ? "Gallery | Smart Buddy"
+              : "Smart Buddy | Aarya Innovtech";
     window.scrollTo({ top: 0, behavior: "auto" });
-  }, [activeProductPage, activeClientPage, activeAboutPage]);
+  }, [activeProductPage, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
 
   useEffect(() => {
     document.body.style.overflow = selectedProduct || selectedMedia ? "hidden" : "";
@@ -468,12 +627,6 @@ function App() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [productMenuOpen]);
 
-  useEffect(() => {
-    if (chatOpen) {
-      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chatMessages, chatOpen]);
-
   const scrollToSection = (sectionId) => {
     if (sectionId === "about") {
       navigateToAbout();
@@ -485,14 +638,26 @@ function App() {
       return;
     }
 
+    if (sectionId === "achievements") {
+      navigateToAchievements();
+      return;
+    }
+
+    if (sectionId === "gallery") {
+      navigateToGallery();
+      return;
+    }
+
     setMenuOpen(false);
     setProductMenuOpen(false);
 
-    if (activeProductSlug || activeClientPage || activeAboutPage) {
+    if (activeProductSlug || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage) {
       window.history.pushState(null, "", `${window.location.pathname}${window.location.search}`);
       setActiveProductSlug(null);
       setActiveClientPage(false);
       setActiveAboutPage(false);
+      setActiveAchievementPage(false);
+      setActiveGalleryPage(false);
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
           document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -507,6 +672,8 @@ function App() {
   const navigateToAbout = () => {
     setMenuOpen(false);
     setProductMenuOpen(false);
+    setActiveAchievementPage(false);
+    setActiveGalleryPage(false);
 
     if (activeAboutPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -520,6 +687,8 @@ function App() {
     setMenuOpen(false);
     setProductMenuOpen(false);
     setActiveAboutPage(false);
+    setActiveAchievementPage(false);
+    setActiveGalleryPage(false);
 
     if (activeClientPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -529,11 +698,43 @@ function App() {
     window.location.hash = "/clients";
   };
 
+  const navigateToAchievements = () => {
+    setMenuOpen(false);
+    setProductMenuOpen(false);
+    setActiveAboutPage(false);
+    setActiveClientPage(false);
+    setActiveGalleryPage(false);
+
+    if (activeAchievementPage) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    window.location.hash = "/achievements";
+  };
+
+  const navigateToGallery = () => {
+    setMenuOpen(false);
+    setProductMenuOpen(false);
+    setActiveAboutPage(false);
+    setActiveClientPage(false);
+    setActiveAchievementPage(false);
+
+    if (activeGalleryPage) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    window.location.hash = "/gallery";
+  };
+
   const navigateToProduct = (slug) => {
     setMenuOpen(false);
     setProductMenuOpen(false);
     setActiveClientPage(false);
     setActiveAboutPage(false);
+    setActiveAchievementPage(false);
+    setActiveGalleryPage(false);
     if (activeProductSlug === slug) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -549,29 +750,24 @@ function App() {
     setSelectedProduct(product);
   };
 
+  const openProductMenuOnHover = () => {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setProductMenuOpen(true);
+    }
+  };
+
+  const closeProductMenuOnHover = () => {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setProductMenuOpen(false);
+    }
+  };
+
   const moveTestimonial = (direction) => {
     setTestimonialIndex((current) => (current + direction + testimonials.length) % testimonials.length);
   };
 
   const moveHero = (direction) => {
     setHeroIndex((current) => (current + direction + heroSlides.length) % heroSlides.length);
-  };
-
-  const sendChatMessage = (message) => {
-    const trimmedMessage = message.trim();
-    if (!trimmedMessage) return;
-
-    setChatMessages((current) => [
-      ...current,
-      { role: "user", text: trimmedMessage },
-      { role: "assistant", text: getChatReply(trimmedMessage) },
-    ]);
-    setChatInput("");
-  };
-
-  const handleChatSubmit = (event) => {
-    event.preventDefault();
-    sendChatMessage(chatInput);
   };
 
   const handleContact = (event) => {
@@ -586,8 +782,32 @@ function App() {
   };
 
   return (
-    <>
-      <header className={`site-header ${scrolled || activeAboutPage ? "is-scrolled" : ""}`}>
+    <LazyMotion features={domAnimation}>
+      <>
+      {loaderVisible ? (
+        <div className={`site-loader ${siteLoading ? "" : "is-hidden"}`} role="status" aria-label="Loading Smart Buddy website">
+          <div className="site-loader-panel">
+            <img src="/images/620e4382b29c9logo.png" alt="" aria-hidden="true" decoding="async" />
+            <div
+              className="site-loader-track"
+              role="progressbar"
+              aria-label="Website loading progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={loaderProgress}
+            >
+              <span style={{ width: `${loaderProgress}%` }} />
+            </div>
+            <span className="site-loader-percent">{loaderProgress}%</span>
+          </div>
+        </div>
+      ) : null}
+      <m.header
+        className={`site-header ${scrolled || activeAboutPage ? "is-scrolled" : ""}`}
+        variants={navbarVariants}
+        initial={motionInitial}
+        animate="visible"
+      >
         <span className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
         <div className="topline">
           <div className="container topline-inner">
@@ -596,11 +816,6 @@ function App() {
               <a href="mailto:sales@smartbuddy.co.in">
                 <Mail size={14} /> sales@smartbuddy.co.in
               </a>
-              <a href="tel:+918806796868">
-                <Phone size={14} />
-                <span className="desktop-phone">+91 8806796868 / +91 9923810197</span>
-                <span className="mobile-phone">+91 8806796868</span>
-              </a>
             </div>
           </div>
         </div>
@@ -608,18 +823,28 @@ function App() {
           <button className="brand" onClick={() => scrollToSection("home")} aria-label="Go to home">
             <img src="/images/620e4382b29c9logo.png" alt="Smart Buddy" />
           </button>
-          <div className={`nav-links ${menuOpen ? "is-open" : ""}`}>
-            {navLinks.slice(0, 2).map(([label, section]) => (
+          <div className={`nav-links ${menuOpen ? "is-open" : ""}`} id="primary-navigation">
+            {navLinks.slice(0, 1).map(([label, section]) => (
               <button
-                className={!activeProductPage && !activeClientPage && !activeAboutPage && activeSection === section ? "is-active" : ""}
+                className={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section ? "is-active" : ""}
                 onClick={() => scrollToSection(section)}
-                aria-current={!activeProductPage && !activeClientPage && !activeAboutPage && activeSection === section ? "page" : undefined}
+                aria-current={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section ? "page" : undefined}
                 key={section}
               >
                 {label}
               </button>
             ))}
-            <div className={`nav-product ${productMenuOpen ? "is-open" : ""}`} ref={productMenuRef}>
+            <div
+              className={`nav-product ${productMenuOpen ? "is-open" : ""}`}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setProductMenuOpen(false);
+                }
+              }}
+              onMouseEnter={openProductMenuOnHover}
+              onMouseLeave={closeProductMenuOnHover}
+              ref={productMenuRef}
+            >
               <button
                 className={activeProductPage ? "is-active" : ""}
                 type="button"
@@ -646,22 +871,28 @@ function App() {
                 ))}
               </div>
             </div>
-            {navLinks.slice(2).map(([label, section]) => (
+            {navLinks.slice(1).map(([label, section]) => (
               <button
                 className={
                   section === "about" && activeAboutPage
                     ? "is-active"
+                    : section === "achievements" && activeAchievementPage
+                      ? "is-active"
+                    : section === "gallery" && activeGalleryPage
+                      ? "is-active"
                     : section === "clients" && activeClientPage
                       ? "is-active"
-                      : !activeProductPage && !activeClientPage && !activeAboutPage && activeSection === section
+                      : !activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section
                         ? "is-active"
                         : ""
                 }
                 onClick={() => scrollToSection(section)}
                 aria-current={
                   (section === "about" && activeAboutPage) ||
+                  (section === "achievements" && activeAchievementPage) ||
+                  (section === "gallery" && activeGalleryPage) ||
                   (section === "clients" && activeClientPage) ||
-                  (!activeProductPage && !activeClientPage && !activeAboutPage && activeSection === section)
+                  (!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section)
                     ? "page"
                     : undefined
                 }
@@ -678,78 +909,132 @@ function App() {
             className="menu-toggle"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
+            aria-controls="primary-navigation"
             aria-label="Toggle navigation"
           >
             {menuOpen ? <X /> : <Menu />}
           </button>
         </nav>
-      </header>
+      </m.header>
 
       <main>
-        {activeProductPage ? (
-          <ProductPage
-            product={activeProductPage}
-            onNavigateHome={scrollToSection}
-            onNavigateProduct={navigateToProduct}
-          />
-        ) : activeClientPage ? (
-          <ClientPage onNavigateHome={scrollToSection} />
-        ) : activeAboutPage ? (
-          <AboutPage onNavigateHome={scrollToSection} />
-        ) : (
-          <>
+        <AnimatePresence mode="wait" initial={false}>
+          <m.div
+            className="page-transition"
+            key={currentPageKey}
+            variants={pageTransitionVariants}
+            initial={motionInitial}
+            animate="visible"
+            exit={prefersReducedMotion ? undefined : "exit"}
+          >
+            {activeProductPage ? (
+              <ProductPage
+                product={activeProductPage}
+                onNavigateHome={scrollToSection}
+                onNavigateProduct={navigateToProduct}
+              />
+            ) : activeClientPage ? (
+              <ClientPage onNavigateHome={scrollToSection} />
+            ) : activeAboutPage ? (
+              <AboutPage onNavigateHome={scrollToSection} />
+            ) : activeAchievementPage ? (
+              <AchievementPage onNavigateHome={scrollToSection} />
+            ) : activeGalleryPage ? (
+              <GalleryPage onNavigateHome={scrollToSection} onOpenMedia={setSelectedMedia} />
+            ) : (
+              <>
           <section className="hero" id="home">
           <div className="hero-backgrounds">
-            {heroSlides.map((slide, index) => (
-              <img
-                className={`hero-bg ${heroIndex === index ? "is-active" : ""}`}
-                src={slide.image}
-                alt=""
-                key={slide.image}
-              />
-            ))}
+            <img
+              className="hero-bg is-active"
+              src={heroBackgroundImage}
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
           </div>
           <div className="hero-overlay" />
           <div className="container hero-inner">
-            <div className="hero-copy" key={heroIndex}>
-              <span className="eyebrow light">
+            <m.div className="hero-copy" variants={heroContainerVariants}>
+              <m.span className="eyebrow light" variants={heroItemVariants}>
                 <Sparkles size={15} /> {heroSlides[heroIndex].eyebrow}
-              </span>
-              <h1>{heroSlides[heroIndex].title}</h1>
-              <p>{heroSlides[heroIndex].text}</p>
-              <div className="hero-actions">
+              </m.span>
+              <m.h1 variants={heroItemVariants}>{heroSlides[heroIndex].title}</m.h1>
+              <m.p variants={heroItemVariants}>{heroSlides[heroIndex].text}</m.p>
+              <m.div className="hero-actions" variants={heroItemVariants}>
                 <button className="button primary" onClick={() => scrollToSection("solutions")}>
                   Explore solutions <ArrowRight size={18} />
                 </button>
                 <button className="button glass" onClick={() => scrollToSection("contact")}>
                   Talk to our team
                 </button>
-              </div>
-              <div className="hero-mini-panel" aria-label="Smart Buddy quick highlights">
+              </m.div>
+              <m.div className="hero-mini-panel" aria-label="Smart Buddy quick highlights" variants={heroItemVariants}>
                 <span><BadgeCheck size={14} /> OEM since 2010</span>
                 <span><ShieldCheck size={14} /> ISO, CE, MPCB</span>
                 <span><Factory size={14} /> Hygiene-sector machines</span>
+              </m.div>
+            </m.div>
+            <m.div
+              className="hero-showcase"
+              variants={heroVisualVariants}
+              whileHover={prefersReducedMotion ? undefined : { y: -6, scale: 1.006 }}
+            >
+              <div className="hero-featured-product">
+                <div className="hero-featured-copy">
+                  <span className="hero-featured-kicker"><Star size={13} /> Featured product</span>
+                  <h2>Smart ECO<br />Toilet</h2>
+                  <i aria-hidden="true" />
+                  <p>IoT-enabled, water-saving, self-sustaining public toilet solution for cleaner, greener communities.</p>
+                </div>
+                <button
+                  className="hero-featured-stage"
+                  type="button"
+                  onClick={() => navigateToProduct(products[0].pageSlug)}
+                  aria-label={`Open ${products[0].title}`}
+                >
+                  <span aria-hidden="true" />
+                  <img src={products[0].image} alt="" loading="eager" decoding="async" />
+                </button>
               </div>
-            </div>
-            <div className="hero-card">
-              <span className="hero-card-label"><BadgeCheck size={14} /> OEM since 2010</span>
-              <div className="hero-card-icon">
-                <ShieldCheck size={25} />
+              <div className="hero-product-strip" aria-label="Featured Smart Buddy products">
+                {products.slice(0, 4).map((product) => (
+                  <button
+                    className="hero-product-tile"
+                    type="button"
+                    onClick={() => navigateToProduct(product.pageSlug)}
+                    key={product.title}
+                  >
+                    <img src={product.image} alt="" loading="lazy" decoding="async" />
+                    <strong>{product.title}</strong>
+                    <ArrowRight size={16} />
+                  </button>
+                ))}
               </div>
-              <p>Trusted manufacturing expertise</p>
-              <strong>2010</strong>
-              <span>OEM since in hygiene sector special purpose machines</span>
-              <div className="hero-card-points">
-                <span><CheckCircle2 size={13} /> Smart Buddy product range</span>
-                <span><CheckCircle2 size={13} /> Nashik and Mumbai offices</span>
+              <div className="hero-proof-strip" aria-label="Smart Buddy proof points">
+                <div>
+                  <ShieldCheck size={22} />
+                  <p><strong>OEM since 2010</strong><span>Trusted by government & private organizations</span></p>
+                </div>
+                <div>
+                  <BadgeCheck size={22} />
+                  <p><strong>ISO, CE, MPCB</strong><span>Certified for quality, safety & compliance</span></p>
+                </div>
+                <div>
+                  <Monitor size={22} />
+                  <p><strong>IoT-Ready</strong><span>Smart monitoring for efficient operations</span></p>
+                </div>
               </div>
-            </div>
+            </m.div>
           </div>
           <div className="container hero-bottom">
             <div className="hero-pagination">
               <div className="hero-dots" aria-label="Hero slides">
                 {heroSlides.map((slide, index) => (
                   <button
+                    type="button"
                     className={heroIndex === index ? "is-active" : ""}
                     onClick={() => setHeroIndex(index)}
                     aria-label={`Show slide ${index + 1}`}
@@ -762,8 +1047,8 @@ function App() {
             <div className="hero-bottom-actions">
               <p>Scroll to discover <span /></p>
               <div className="hero-arrows">
-                <button onClick={() => moveHero(-1)} aria-label="Previous hero slide"><ChevronLeft size={18} /></button>
-                <button onClick={() => moveHero(1)} aria-label="Next hero slide"><ChevronRight size={18} /></button>
+                <button type="button" onClick={() => moveHero(-1)} aria-label="Previous hero slide"><ChevronLeft size={18} /></button>
+                <button type="button" onClick={() => moveHero(1)} aria-label="Next hero slide"><ChevronRight size={18} /></button>
               </div>
             </div>
           </div>
@@ -786,86 +1071,69 @@ function App() {
           </div>
         </section>
 
-        <section className="section solutions" id="solutions">
+        <section className="section solutions solution-studio" id="solutions">
           <div className="container">
-            <div className="section-heading split-heading" data-reveal>
-              <div>
-                <span className="eyebrow"><Leaf size={15} /> Smart Buddy portfolio</span>
-                <h2>Special purpose machines for the <em>hygiene sector.</em></h2>
-              </div>
+            <div className="solution-studio-heading" data-reveal>
+              <span className="eyebrow"><Leaf size={15} /> Solution studio</span>
+              <h2>Plan the site first. Choose the machine with confidence.</h2>
               <p>
-                The PDF profile lists Electronic ECO Toilet, Portable FRP Toilet, Bio-Digester, Organic Waste
-                Composter, PET Bottle Shredder, and Computer Kiosk.
+                A lighter way to navigate Smart Buddy systems: start with the site need, then move into
+                the right product family for deployment details.
               </p>
             </div>
-            <div className="solutions-grid">
-              {products.map((product, index) => {
-                const Icon = product.icon;
-                return (
-                  <article
-                    className={`solution-card accent-${product.accent}`}
-                    style={{ "--card-image": `url(${product.image})`, "--reveal-delay": `${index * 65}ms` }}
-                    data-reveal
-                    key={product.title}
-                  >
-                    <div className="solution-top">
-                      <span className="solution-number">0{index + 1}</span>
-                      <div className="solution-icon"><Icon size={25} /></div>
-                    </div>
-                    <span className="solution-tag">{product.tag}</span>
-                    <h3>{product.title}</h3>
-                    <p>{product.short}</p>
-                    <button onClick={() => openProduct(product)}>
-                      Explore solution <ArrowRight size={16} />
-                    </button>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
 
-        <section className="feature-panel flagship">
-          <div className="container flagship-grid">
-            <div className="flagship-copy" data-reveal>
-              <span className="eyebrow"><Sun size={15} /> Bio-Digester</span>
-              <h2>On-site treatment without sewerage network or STP.</h2>
-              <p>
-                Anaerobic Bio-Digestion Technology uses bacteria to break down waste matter into usable water
-                and gas. The zero-waste process is on-site, independent, and does not require major infrastructure.
-              </p>
-              <div className="bio-feature-grid">
-                {bioFeatures.map(({ icon: Icon, label }) => (
-                  <span key={label}><Icon size={18} /> {label}</span>
-                ))}
+            <div className="solution-studio-grid">
+              <aside className="solution-studio-brief" data-reveal>
+                <span className="solution-brief-kicker">01 / Site brief</span>
+                <h3>Tell us the location, usage pattern, utilities, and waste stream.</h3>
+                <p>
+                  We map the requirement to a practical Smart Buddy configuration, keeping operation,
+                  maintenance, and public usability in view from day one.
+                </p>
+                <div className="solution-brief-list" aria-label="Solution planning inputs">
+                  <span><MapPin size={16} /> Site type</span>
+                  <span><Users size={16} /> Footfall</span>
+                  <span><Droplets size={16} /> Water and power</span>
+                  <span><Wrench size={16} /> Maintenance plan</span>
+                </div>
+                <button className="button primary" type="button" onClick={() => scrollToSection("contact")}>
+                  Discuss requirement <ArrowRight size={17} />
+                </button>
+              </aside>
+
+              <div className="solution-journeys" aria-label="Smart Buddy solution paths">
+                {solutionJourneys.map((journey, index) => {
+                  const product = products.find((item) => item.pageSlug === journey.pageSlug);
+                  const Icon = journey.icon;
+
+                  return (
+                    <button
+                      className={`solution-journey ${index === 0 ? "is-featured" : ""}`}
+                      type="button"
+                      onClick={() => product && openProduct(product)}
+                      style={{ "--reveal-delay": `${index * 70}ms` }}
+                      data-reveal
+                      key={journey.title}
+                    >
+                      <div className="solution-journey-copy">
+                        <span className="solution-journey-index"><Icon size={16} /> 0{index + 1} / {journey.label}</span>
+                        <h3>{journey.title}</h3>
+                        <p>{journey.text}</p>
+                        <div className="solution-journey-tags">
+                          {journey.points.map((point) => <span key={point}>{point}</span>)}
+                        </div>
+                      </div>
+                      <div className="solution-journey-media">
+                        <img src={journey.image} alt="" loading="lazy" decoding="async" />
+                      </div>
+                      <span className="solution-journey-action" aria-hidden="true">
+                        <ArrowRight size={17} />
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-              <p className="configuration-note">
-                The Bio-Digester Tank connects to the outlet of the toilet and can be installed above or below
-                ground. AMI / DRDO bacteria treats sewage into effluent that is safe to discharge.
-              </p>
             </div>
-            <button
-              className="flagship-image"
-              data-reveal
-              onClick={() => setSelectedMedia({
-                title: "Bio-Digester tank system",
-                category: "Bio-Digester",
-                src: "/media/products/bio-digester-new.png",
-                alt: "Bio-Digester tank and treatment system",
-              })}
-              aria-label="Open Bio-Digester image"
-            >
-              <img src="/media/products/bio-digester-new.png" alt="Bio-Digester tank and treatment system" />
-              <span><Maximize2 size={17} /> View system</span>
-            </button>
-          </div>
-          <div className="container specification-grid" data-reveal>
-            {bioSpecifications.map(([label, value]) => (
-              <div key={label}>
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))}
           </div>
         </section>
 
@@ -881,7 +1149,7 @@ function App() {
                 <span><Factory size={16} /> Nashik, Mumbai and Ambad MIDC</span>
               </div>
             </div>
-            <div className="stats-grid">
+            <div className="stats-grid" ref={statsGridRef}>
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (
@@ -890,7 +1158,7 @@ function App() {
                       <i><Icon size={17} /></i>
                       <small>{String(index + 1).padStart(2, "0")}</small>
                     </div>
-                    <strong>{stat.value}</strong>
+                    <strong><CountValue value={stat.value} active={statsActive} /></strong>
                     <span>{stat.label}</span>
                     <p>{stat.detail}</p>
                   </article>
@@ -904,10 +1172,10 @@ function App() {
           <div className="container about-grid">
             <div className="about-visual" data-reveal>
               <div className="about-image">
-                <img src="/media/eco-toilet-ranchi-twin.jpeg" alt="Installed Smart Buddy electronic eco toilets" />
+                <img src="/media/eco-toilet-ranchi-twin.jpeg" alt="Installed Smart Buddy electronic eco toilets" loading="lazy" decoding="async" />
               </div>
               <div className="mascot-card">
-                <img src="/images/smart_buddy.png" alt="Smart Buddy mascot" />
+                <img src="/images/smart_buddy.png" alt="Smart Buddy mascot" loading="lazy" decoding="async" />
               </div>
               <div className="experience-badge">
                 <strong>2010</strong>
@@ -922,7 +1190,7 @@ function App() {
                 since 2010.
               </p>
               <p>
-                The product range covers Electronic ECO Toilet, Portable FRP Toilet, Bio-Digester, Organic Waste
+                The product range covers Electronic ECO Toilet, Bio-Digester, Organic Waste
                 Composter, PET Bottle Shredder and Reverse Vending Machine, and Computer Kiosk.
               </p>
               <div className="about-points">
@@ -976,7 +1244,7 @@ function App() {
                   data-reveal
                   key={item.title}
                 >
-                  <img src={item.image} alt="" />
+                  <img src={item.image} alt={item.title} loading="lazy" decoding="async" />
                   <span className="project-gallery-index">{String(index + 1).padStart(2, "0")}</span>
                   <span className="project-gallery-expand">
                     {item.type === "video" ? <PlayCircle size={16} /> : <Maximize2 size={15} />}
@@ -993,16 +1261,42 @@ function App() {
 
         <section className="clients" id="clients">
           <div className="container">
-            <div className="section-heading centered" data-reveal>
-              <span className="eyebrow"><Users size={15} /> Our clients</span>
-              <h2>Trusted by public-sector and institutional organizations.</h2>
-            </div>
-            <div className="client-grid">
-              {clientLogos.map((logo, index) => (
-                <div className="client-logo" style={{ "--reveal-delay": `${index * 45}ms` }} data-reveal key={logo.src}>
-                  <img src={logo.src} alt={logo.alt} />
-                </div>
-              ))}
+            <div className="client-showcase">
+              <div className="section-heading centered client-showcase-heading" data-reveal>
+                <span className="eyebrow"><Users size={15} /> Our clients</span>
+                <h2>Trusted by public-sector and institutional organizations.</h2>
+              </div>
+              <div className="client-marquee" aria-label="Client partner logos">
+                {clientLogoRows.map((row, rowIndex) => (
+                  <div className="client-marquee-row" key={`client-row-${rowIndex}`}>
+                    <div className="client-marquee-track">
+                      {[0, 1].map((copyIndex) => (
+                        <div
+                          className="client-grid"
+                          aria-hidden={copyIndex > 0 || undefined}
+                          key={`client-row-${rowIndex}-copy-${copyIndex}`}
+                        >
+                          {row.map((logo, index) => (
+                            <div
+                              className="client-logo"
+                              style={{ "--reveal-delay": `${Math.min(index + rowIndex * 8, 18) * 35}ms` }}
+                              data-reveal={copyIndex === 0 || undefined}
+                              key={`${logo.src}-${rowIndex}-${copyIndex}-${index}`}
+                            >
+                              <img
+                                src={logo.src}
+                                alt={copyIndex === 0 ? logo.alt : ""}
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="client-preview-actions" data-reveal>
               <button className="button primary" type="button" onClick={navigateToClients}>
@@ -1013,7 +1307,13 @@ function App() {
         </section>
 
         <section className="section testimonials">
-          <div className="container testimonial-grid">
+          <div
+            className="container testimonial-grid"
+            onFocus={() => setTestimonialPaused(true)}
+            onBlur={() => setTestimonialPaused(false)}
+            onMouseEnter={() => setTestimonialPaused(true)}
+            onMouseLeave={() => setTestimonialPaused(false)}
+          >
             <div className="testimonial-title" data-reveal>
               <span className="eyebrow"><MessageCircle size={15} /> Profile highlights</span>
               <h2>Technology notes from the Smart Buddy profile.</h2>
@@ -1023,7 +1323,15 @@ function App() {
                 <button onClick={() => moveTestimonial(1)} aria-label="Next testimonial"><ChevronRight /></button>
               </div>
             </div>
-            <article className="testimonial-card" data-reveal key={testimonialIndex}>
+            <m.article
+              className="testimonial-card"
+              data-reveal
+              aria-live="polite"
+              variants={carouselItemVariants}
+              initial={motionInitial}
+              animate="visible"
+              key={testimonialIndex}
+            >
               <Quote size={42} />
               <p>{testimonials[testimonialIndex].quote}</p>
               <div>
@@ -1033,7 +1341,7 @@ function App() {
                   <span>{testimonials[testimonialIndex].role}</span>
                 </div>
               </div>
-            </article>
+            </m.article>
           </div>
         </section>
 
@@ -1042,14 +1350,17 @@ function App() {
             <div className="contact-copy" data-reveal>
               <span className="eyebrow light"><Mail size={15} /> Contact Aarya Innovtech</span>
               <h2>Original Equipment Manufacturer of special purpose machines.</h2>
-              <p>Share your requirement for Electronic ECO Toilet, Portable FRP Toilet, Bio-Digester, Organic Waste Composter, PET Bottle Shredder, or Computer Kiosk.</p>
+              <p>Share your requirement for Electronic ECO Toilet, Bio-Digester, Organic Waste Composter, PET Bottle Shredder, or Computer Kiosk.</p>
               <div className="contact-benefits">
                 <span><BadgeCheck size={15} /> OEM since 2010</span>
                 <span><Wrench size={15} /> Hygiene-sector product range</span>
                 <span><Globe2 size={15} /> Public utility deployments</span>
               </div>
               <div className="contact-details">
-                <a href="tel:+918806796868"><i><Phone size={17} /></i><span><small>Call us</small>+91 8806796868 / +91 9923810197</span></a>
+                <a href="tel:+918806796868" aria-label="Call Aarya Innovtech">
+                  <i><Phone size={17} /></i>
+                  <span><small>Call us</small>+91 8806796868</span>
+                </a>
                 <a href="mailto:sales@smartbuddy.co.in"><i><Mail size={17} /></i><span><small>Email us</small>sales@smartbuddy.co.in</span></a>
                 <div><i><MapPin size={17} /></i><span><small>Nashik Office</small>Flat No.4A, Sayali Darshan -A-Wing.<br />Radha Nagar, Makhamalabad Road,<br />Panchavati, Nashik, Maharashtra-422003</span></div>
                 <div><i><MapPin size={17} /></i><span><small>Mumbai Office</small>Flat No.C-03, The Maharashtra Chs Ltd.<br />C Wing Ground Floor, Ambekar Nagar,<br />G. D. Ambekar Mark, Parel Mumbai City,<br />Maharashtra - 400012</span></div>
@@ -1082,11 +1393,18 @@ function App() {
             </form>
           </div>
         </section>
-          </>
-        )}
+              </>
+            )}
+          </m.div>
+        </AnimatePresence>
       </main>
 
-      <footer>
+      <m.footer
+        variants={footerRevealVariants}
+        initial={motionInitial}
+        whileInView="visible"
+        viewport={viewportOnce}
+      >
         <div className="container footer-assurance">
           <div><BadgeCheck size={20} /><span><strong>OEM since 2010</strong>Special purpose machines in hygiene sector</span></div>
           <div><Wrench size={20} /><span><strong>Smart Buddy range</strong>ECO Toilet, Bio-Digester, Composter, RVM and Kiosk</span></div>
@@ -1094,7 +1412,7 @@ function App() {
         </div>
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img src="/images/620e4382b29c9logo.png" alt="Smart Buddy" />
+            <img src="/images/620e4382b29c9logo.png" alt="Smart Buddy" loading="lazy" decoding="async" />
             <p>Original Equipment Manufacturer of Special Purpose Machines in Hygiene Sector since 2010.</p>
             <span>Ideas engineered into reality.</span>
           </div>
@@ -1113,118 +1431,26 @@ function App() {
         </div>
         <div className="container footer-bottom">
           <p>(c) {new Date().getFullYear()} Aarya Innovtech. All rights reserved.</p>
-          <button onClick={() => activeProductPage || activeClientPage || activeAboutPage ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection("home")} type="button">
+          <button onClick={() => activeProductPage || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection("home")} type="button">
             Back to top <ArrowUpRight size={14} />
           </button>
         </div>
-      </footer>
+      </m.footer>
 
-      <div className={`floating-actions ${actionsOpen ? "is-open" : ""} ${chatOpen ? "is-chat-hidden" : ""}`}>
-        <div className="floating-actions-menu" id="floating-contact-actions">
-          <button
-            className="floating-button chatbot"
-            onClick={() => {
-              setChatOpen(true);
-              setActionsOpen(false);
-            }}
-            type="button"
-            aria-controls="smart-buddy-chat"
-            aria-hidden={chatOpen}
-            tabIndex={chatOpen ? -1 : undefined}
-            aria-label="Open Smart Buddy assistant"
-          >
-            <MessageCircle size={21} />
-            <span className="chatbot-status" />
-          </button>
-          <a
-            className="floating-button whatsapp"
-            href="https://api.whatsapp.com/send?phone=918806796868"
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => setActionsOpen(false)}
-            aria-hidden={chatOpen}
-            tabIndex={chatOpen ? -1 : undefined}
-            aria-label="Chat on WhatsApp"
-          >
-            <WhatsAppIcon size={25} />
-          </a>
-          <a
-            className="floating-button call"
-            href="tel:+918806796868"
-            onClick={() => setActionsOpen(false)}
-            aria-hidden={chatOpen}
-            tabIndex={chatOpen ? -1 : undefined}
-            aria-label="Call Aarya Innovtech"
-          >
-            <Phone size={21} />
-          </a>
-        </div>
-        <button
-          className="floating-actions-toggle"
-          onClick={() => setActionsOpen((open) => !open)}
-          type="button"
-          aria-expanded={actionsOpen}
-          aria-controls="floating-contact-actions"
-          aria-hidden={chatOpen}
-          tabIndex={chatOpen ? -1 : undefined}
-          aria-label={actionsOpen ? "Hide contact options" : "Show contact options"}
-        >
-          <Plus size={22} />
-          <span className="floating-actions-pulse" />
-        </button>
-      </div>
-
-      <section
-        className={`chatbot-panel ${chatOpen ? "is-open" : ""}`}
-        id="smart-buddy-chat"
-        aria-label="Smart Buddy assistant"
-        aria-hidden={!chatOpen}
+      <a
+        className="floating-whatsapp"
+        href="https://wa.me/918806796868?text=Hello%20Smart%20Buddy%20team%2C%20I%20need%20help%20with%20a%20solution."
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Chat with Aarya Innovtech on WhatsApp"
       >
-        <div className="chatbot-header">
-          <div className="chatbot-avatar"><MessageCircle size={19} /></div>
-          <div>
-            <strong>Smart Buddy Assistant</strong>
-            <span><i /> Online to guide you</span>
-          </div>
-          <button type="button" onClick={() => setChatOpen(false)} aria-label="Close Smart Buddy assistant"><X size={17} /></button>
-        </div>
-        <div className="chatbot-body" aria-live="polite">
-          <p className="chatbot-note">Typically replies instantly</p>
-          {chatMessages.map((message, index) => (
-            <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
-              {message.role === "assistant" && <MessageCircle size={14} />}
-              <p>{message.text}</p>
-            </div>
-          ))}
-          <div ref={chatEndRef} />
-        </div>
-        {chatMessages.length === 1 && (
-          <div className="chatbot-prompts">
-            {chatPrompts.map((prompt) => (
-              <button type="button" onClick={() => sendChatMessage(prompt.message)} key={prompt.label}>{prompt.label}</button>
-            ))}
-          </div>
-        )}
-        <a
-          className="chatbot-whatsapp"
-          href="https://api.whatsapp.com/send?phone=918806796868&text=Hello%20Smart%20Buddy%20team%2C%20I%20need%20help%20with%20a%20solution."
-          target="_blank"
-          rel="noreferrer"
-        >
-          <WhatsAppIcon size={16} /> Continue with our team
-        </a>
-        <form className="chatbot-composer" onSubmit={handleChatSubmit}>
-          <input
-            value={chatInput}
-            onChange={(event) => setChatInput(event.target.value)}
-            type="text"
-            placeholder="Type your requirement..."
-            aria-label="Type your message"
-          />
-          <button type="submit" aria-label="Send message"><Send size={16} /></button>
-        </form>
-        <p className="chatbot-footer">Powered by Smart Buddy</p>
-      </section>
+        <WhatsAppIcon size={24} />
+        <span className="floating-whatsapp-pulse" />
+      </a>
+
+      <a className="floating-call" href="tel:+918806796868" aria-label="Call Aarya Innovtech">
+        <Phone size={22} />
+      </a>
 
       {selectedProduct && (
         <div className="modal-backdrop" onMouseDown={() => setSelectedProduct(null)}>
@@ -1235,7 +1461,7 @@ function App() {
             </div>
             <span className="solution-tag">{selectedProduct.tag}</span>
             <h2 id="modal-title">{selectedProduct.title}</h2>
-            {selectedProduct.image && <img className="modal-product-image" src={selectedProduct.image} alt={selectedProduct.title} />}
+            {selectedProduct.image && <img className="modal-product-image" src={selectedProduct.image} alt={selectedProduct.title} loading="lazy" decoding="async" />}
             <p>{selectedProduct.text}</p>
             <div className="modal-features">
               {selectedProduct.features.map((feature) => (
@@ -1256,7 +1482,7 @@ function App() {
             {selectedMedia.type === "video" ? (
               <video src={selectedMedia.src} poster={selectedMedia.poster} controls autoPlay playsInline />
             ) : (
-              <img src={selectedMedia.src} alt={selectedMedia.alt} />
+              <img src={selectedMedia.src} alt={selectedMedia.alt} loading="lazy" decoding="async" />
             )}
             <div className="media-caption">
               <span>{selectedMedia.category}</span>
@@ -1265,7 +1491,8 @@ function App() {
           </article>
         </div>
       )}
-    </>
+      </>
+    </LazyMotion>
   );
 }
 

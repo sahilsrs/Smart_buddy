@@ -44,7 +44,7 @@ function ProductPage({ product, onNavigateHome, onNavigateProduct }) {
             </div>
           </div>
           <div className="product-page-hero-image" data-reveal>
-            <img src={product.image} alt={product.imageAlt} />
+            <img src={product.image} alt={product.imageAlt} loading="eager" decoding="async" fetchPriority="high" />
             <span><CheckCircle2 size={16} /> Smart Buddy product</span>
             <div className="product-page-image-note">
               <small>Product line</small>
@@ -165,7 +165,7 @@ function ProductPage({ product, onNavigateHome, onNavigateProduct }) {
                 style={{ "--reveal-delay": `${index * 65}ms` }}
                 key={item.slug}
               >
-                <img src={item.image} alt="" />
+                <img src={item.image} alt={`${item.title} product preview`} loading="lazy" decoding="async" />
                 <span>{item.eyebrow}</span>
                 <strong>{item.title}</strong>
                 <em>View product <ArrowRight size={15} /></em>

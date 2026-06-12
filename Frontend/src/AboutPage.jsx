@@ -9,7 +9,6 @@ import {
   Leaf,
   Mail,
   MapPin,
-  Phone,
   ShieldCheck,
   Users,
   Wrench,
@@ -21,7 +20,6 @@ const directors = [
     role: "Founder & CEO",
     company: "Aarya Innovtech Pvt. Ltd.",
     image: "/media/about/prashant-ashok-bachhav.jpeg",
-    phone: "+91 8806796868",
     email: "ceo@smartbuddy.co.in",
     note: "Leads product innovation, manufacturing, and business growth for the Smart Buddy range.",
   },
@@ -30,7 +28,6 @@ const directors = [
     role: "Director",
     company: "Aarya Innovtech Pvt. Ltd.",
     image: "/media/about/sujata-prashant-bachhav.jpeg",
-    phone: "+91 9923810197",
     email: "info@smartbuddy.com",
     note: "Guides operations, government tenders, finance, automation, and R&D coordination.",
   },
@@ -71,12 +68,6 @@ const capabilityCards = [
     text: "Automatic flushing, cleaning support, monitoring, and backup-ready deployment.",
   },
   {
-    icon: Factory,
-    label: "Portable",
-    title: "Portable FRP Toilet",
-    text: "Corrosion-free, rugged cabins for public spaces, events, and site-based use.",
-  },
-  {
     icon: Leaf,
     label: "Treatment",
     title: "Bio-Digester",
@@ -92,7 +83,6 @@ const capabilityCards = [
 
 const portfolio = [
   "Electronic ECO Toilet",
-  "Portable FRP Toilet",
   "Bio-Digester",
   "Organic Waste Composter",
   "PET Bottle Shredder",
@@ -111,9 +101,9 @@ const companyPoints = [
     text: "S27, Ambad MIDC, Nashik - 422010",
   },
   {
-    label: "Direct contact",
-    icon: Phone,
-    text: "+91 8806796868 | +91 9923810197 | sales@smartbuddy.co.in",
+    label: "Email contact",
+    icon: Mail,
+    text: "sales@smartbuddy.co.in",
   },
 ];
 
@@ -169,9 +159,6 @@ function AboutPage({ onNavigateHome }) {
             <a href={`mailto:${directors[0].email}`} className="about-page-summary-link">
               <Mail size={14} /> ceo@smartbuddy.co.in
             </a>
-            <a href={`tel:${directors[0].phone.replace(/\s+/g, "")}`} className="about-page-summary-link">
-              <Phone size={14} /> +91 8806796868
-            </a>
           </aside>
         </div>
       </section>
@@ -186,14 +173,13 @@ function AboutPage({ onNavigateHome }) {
           <div className="about-leadership-list">
             {directors.map((director, index) => (
               <article className="about-director-card compact" data-reveal style={{ "--reveal-delay": `${index * 70}ms` }} key={director.name}>
-                <img src={director.image} alt={director.name} />
+                <img src={director.image} alt={director.name} loading="lazy" decoding="async" />
                 <div className="about-director-caption compact">
                   <span>{director.role}</span>
                   <h2>{director.name}</h2>
                   <strong>{director.company}</strong>
                   <p>{director.note}</p>
                   <div className="about-director-links">
-                    <a href={`tel:${director.phone.replace(/\s+/g, "")}`}><Phone size={14} /> {director.phone}</a>
                     <a href={`mailto:${director.email}`}><Mail size={14} /> {director.email}</a>
                   </div>
                 </div>
@@ -240,7 +226,7 @@ function AboutPage({ onNavigateHome }) {
             <div className="about-list">
               <p>
                 <BadgeCheck size={14} />
-                Electronic ECO Toilets, Portable FRP Toilets, and Bio-Digester systems for public sanitation projects.
+                Electronic ECO Toilets and Bio-Digester systems for public sanitation projects.
               </p>
               <p>
                 <BadgeCheck size={14} />
@@ -268,7 +254,7 @@ function AboutPage({ onNavigateHome }) {
                 Nashik-based production and office structure keeps documentation and logistics close.
               </p>
               <p>
-                <Phone size={14} />
+                <Mail size={14} />
                 Direct access to the founders for project scoping, pricing, and implementation decisions.
               </p>
             </div>

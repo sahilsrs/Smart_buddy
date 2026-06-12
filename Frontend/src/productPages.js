@@ -66,60 +66,6 @@ export const productPages = {
       "Automatic toilet cleaning system uses pressurized cleaning of floor and wall.",
       "24x7 surveillance system and anti-theft alarm support safer public operation.",
     ],
-    specificationTitle: "Model range",
-    specificationColumns: ["Model No.", "Variant"],
-    specificationRows: [
-      ["SB-E2T-MDL1", "Push button"],
-      ["SB-E2T-MDL2/3", "Token / coin"],
-      ["SB-E2T-MDL4/5", "Smart card and coin"],
-      ["SB-CU-M", "Male community urinals"],
-      ["SB-CU-F", "Female community urinals"],
-    ],
-  },
-  "portable-frp-toilet": {
-    slug: "portable-frp-toilet",
-    title: "Portable FRP Toilet",
-    navLabel: "Portable FRP Toilet",
-    eyebrow: "Portable sanitation cabins",
-    summary:
-      "Portable FRP toilet cabins for public, event, labour, and site-based sanitation with rugged construction and overhead tank options.",
-    image: "/media/products/portable-frp-toilet-garden-new.jpeg",
-    imageAlt: "Smart Buddy portable FRP toilet cabin",
-    overviewTitle: "Portable cabins and washrooms for fast site deployment.",
-    overview: [
-      "Smart Buddy offers portable FRP toilets, washrooms, cabins, and septic tank solutions for locations that need quick, durable sanitation infrastructure.",
-      "The profile lists FRP labour toilets with water tank, FRP Indian toilet with septic tank, FRP portable event toilet, FRP western executive toilet, and FRP portable washroom solutions.",
-      "The products are built using modern manufacturing machinery and are positioned for customers looking for portable cabin manufacturing support in Maharashtra.",
-    ],
-    highlights: [
-      {
-        title: "Where it can be installed",
-        items: ["Highways", "Malls", "Airports", "Railway stations", "Tourist places", "Smart City locations"],
-      },
-      {
-        title: "Major features",
-        items: ["Portable", "Long lasting", "Unbreakable", "Overhead tank", "Revenue generation model"],
-      },
-      {
-        title: "Structure and fabrication",
-        items: ["FRP construction", "3 x 3 feet or user-defined size", "Tamper-proof", "Corrosion-free", "Rugged and long-lasting material"],
-      },
-    ],
-    featureTitle: "Available variants",
-    features: [
-      "Single seater portable FRP toilet.",
-      "Two seater portable FRP toilet.",
-      "Portable FRP urinal.",
-      "Portable washroom and event toilet options.",
-      "Labour toilet and septic tank configurations.",
-    ],
-    specificationTitle: "Model range",
-    specificationColumns: ["Model No.", "Variant"],
-    specificationRows: [
-      ["AT-FRP-S1", "Single seater"],
-      ["AT-FRP-S2", "Two seater"],
-      ["AT-FRP-UR", "Urinal"],
-    ],
   },
   "bio-digester": {
     slug: "bio-digester",
