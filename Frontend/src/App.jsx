@@ -22,7 +22,6 @@ import {
   Monitor,
   Phone,
   PlayCircle,
-  Quote,
   ShieldCheck,
   Sparkles,
   Star,
@@ -103,7 +102,7 @@ function WhatsAppIcon({ size = 22 }) {
   );
 }
 
-const heroBackgroundImage = "/media/hero/smartbuddy-premium-hero-reference.png";
+const heroBackgroundImage = "/media/hero/smartbuddy-abstract-green-hero-bg.png";
 
 const heroSlides = [
   {
@@ -137,6 +136,29 @@ const heroSlides = [
     image: "/media/hero/smartbuddy-hero-coastal-eco-toilet-block.jpg",
   },
 ];
+
+const heroFeaturedImages = [
+  {
+    src: "/media/hero/electronic-eco-toilet-ranchi-twin.jpg",
+    alt: "Electronic ECO Toilet twin cabin installation in a landscaped public site",
+  },
+  {
+    src: "/media/hero/electronic-eco-toilet-green-single.jpg",
+    alt: "Green Smart Buddy Electronic ECO Toilet installed outdoors",
+  },
+  {
+    src: "/media/hero/electronic-eco-toilet-park-double.jpeg",
+    alt: "Double Electronic ECO Toilet installation in a public park",
+  },
+];
+
+const newArrivalProduct = {
+  eyebrow: "New arrival",
+  title: "Solar-ready smart toilet block",
+  text: "A compact public toilet block concept with men, women, and accessible cabins, exterior lighting, rooftop solar support, and Smart Buddy branding for civic locations.",
+  image: "/media/new-arrivals/solar-smart-toilet-block.jpeg",
+  highlights: ["Solar-ready roof", "Accessible cabin", "Men and women layout"],
+};
 
 const products = [
   {
@@ -253,22 +275,46 @@ const stats = [
 
 const testimonials = [
   {
-    quote:
-      "E2T toilets support self-cleaning, automatic flushing, pre-flush, power backup, water backup, smart access, and women-friendly hygiene options.",
-    name: "Electronic ECO Toilet",
-    role: "Profile highlight",
+    title: "Client testimonial 01",
+    quote: "A short field view of a Smart Buddy installation with practical feedback from the site.",
+    role: "Field feedback",
+    video: "/media/testimonials/video6150114488919007873.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007873-poster.png",
   },
   {
-    quote:
-      "The Bio-Digester is an on-site, independent system that does not need a sewerage network, STP, or major infrastructure.",
-    name: "Bio-Digester",
-    role: "Profile highlight",
+    title: "Client testimonial 02",
+    quote: "Customer-side feedback highlighting usability and day-to-day public utility performance.",
+    role: "Client feedback",
+    video: "/media/testimonials/video6150114488919007874.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007874-poster.png",
   },
   {
-    quote:
-      "PET Bottle Shredder and RVM systems make recycling convenient and incentivized through touch screen, cashback, cloud, IoT, and live tracking features.",
-    name: "PET Bottle Shredder",
-    role: "Profile highlight",
+    title: "Client testimonial 03",
+    quote: "Project feedback captured at the location, focused on the installed system and its use.",
+    role: "Project feedback",
+    video: "/media/testimonials/video6150114488919007876.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007876-poster.png",
+  },
+  {
+    title: "Client testimonial 04",
+    quote: "A compact video note from the site showing the deployed Smart Buddy solution in context.",
+    role: "Deployment note",
+    video: "/media/testimonials/video6150114488919007877.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007877-poster.png",
+  },
+  {
+    title: "Client testimonial 05",
+    quote: "Detailed visual feedback from a project location, documenting the system after deployment.",
+    role: "Installation review",
+    video: "/media/testimonials/video6150114488919007878.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007878-poster.png",
+  },
+  {
+    title: "Client testimonial 06",
+    quote: "A field testimonial showing the completed installation and the surrounding user environment.",
+    role: "Field testimonial",
+    video: "/media/testimonials/video6150114488919007879.mp4",
+    poster: "/media/testimonials/posters/video6150114488919007879-poster.png",
   },
 ];
 
@@ -282,12 +328,7 @@ const clientLogos = [
   ...clientRecords.map((client) => ({ src: client.src, alt: client.label })),
 ];
 
-const clientLogoOffset = Math.ceil(clientLogos.length / 2);
-
-const clientLogoRows = [
-  clientLogos,
-  [...clientLogos.slice(clientLogoOffset), ...clientLogos.slice(0, clientLogoOffset)],
-];
+const clientLogoRows = [clientLogos];
 
 const galleryFilters = ["All", "Bio Toilets", "Eco Toilets", "Utility Kiosks", "Technology"];
 
@@ -363,6 +404,34 @@ const getClientRouteFromHash = () => /^#\/clients\/?$/.test(window.location.hash
 const getAboutRouteFromHash = () => /^#\/about\/?$/.test(window.location.hash);
 const getAchievementRouteFromHash = () => /^#\/achievements\/?$/.test(window.location.hash);
 const getGalleryRouteFromHash = () => /^#\/gallery\/?$/.test(window.location.hash);
+const getNewArrivalsRouteFromHash = () => /^#\/new-arrivals\/?$/.test(window.location.hash);
+
+function NewArrivalsPage({ onNavigateHome }) {
+  return (
+    <div className="new-arrivals-page">
+      <section className="new-arrivals-hero">
+        <div className="container new-arrivals-card">
+          <div className="new-arrivals-media" data-reveal>
+            <img src={newArrivalProduct.image} alt={newArrivalProduct.title} decoding="async" />
+          </div>
+          <div className="new-arrivals-copy" data-reveal>
+            <span className="eyebrow"><Sparkles size={15} /> {newArrivalProduct.eyebrow}</span>
+            <h1>{newArrivalProduct.title}</h1>
+            <p>{newArrivalProduct.text}</p>
+            <div className="new-arrivals-highlights" aria-label="New arrival highlights">
+              {newArrivalProduct.highlights.map((highlight) => (
+                <span key={highlight}><BadgeCheck size={15} /> {highlight}</span>
+              ))}
+            </div>
+            <button className="button primary" type="button" onClick={() => onNavigateHome("contact")}>
+              Enquire now <ArrowRight size={17} />
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -372,11 +441,11 @@ function App() {
   const [activeAboutPage, setActiveAboutPage] = useState(() => getAboutRouteFromHash());
   const [activeAchievementPage, setActiveAchievementPage] = useState(() => getAchievementRouteFromHash());
   const [activeGalleryPage, setActiveGalleryPage] = useState(() => getGalleryRouteFromHash());
+  const [activeNewArrivalsPage, setActiveNewArrivalsPage] = useState(() => getNewArrivalsRouteFromHash());
   const [heroIndex, setHeroIndex] = useState(0);
+  const [featuredImageIndex, setFeaturedImageIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedMedia, setSelectedMedia] = useState(null);
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
-  const [testimonialPaused, setTestimonialPaused] = useState(false);
   const [siteLoading, setSiteLoading] = useState(true);
   const [loaderVisible, setLoaderVisible] = useState(true);
   const [loaderProgress, setLoaderProgress] = useState(0);
@@ -402,7 +471,9 @@ function App() {
           ? "achievements"
           : activeGalleryPage
             ? "gallery"
-            : "home";
+            : activeNewArrivalsPage
+              ? "new-arrivals"
+              : "home";
   const motionInitial = prefersReducedMotion ? false : "hidden";
 
   useEffect(() => {
@@ -448,16 +519,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (testimonialPaused || reducedMotion || activeProductPage || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage) {
-      return undefined;
-    }
-
     const timer = window.setInterval(() => {
-      setTestimonialIndex((current) => (current + 1) % testimonials.length);
-    }, 4800);
+      setFeaturedImageIndex((current) => (current + 1) % heroFeaturedImages.length);
+    }, 4300);
     return () => window.clearInterval(timer);
-  }, [activeAboutPage, activeAchievementPage, activeClientPage, activeGalleryPage, activeProductPage, testimonialPaused]);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -468,7 +534,7 @@ function App() {
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, activeNewArrivalsPage]);
 
   useEffect(() => {
     const sections = document.querySelectorAll("main section[id]");
@@ -484,7 +550,7 @@ function App() {
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, activeNewArrivalsPage]);
 
   useEffect(() => {
     const getRevealElements = () => Array.from(document.querySelectorAll("[data-reveal]"));
@@ -544,7 +610,7 @@ function App() {
       fallbackTimers.forEach((timer) => window.clearTimeout(timer));
       observer.disconnect();
     };
-  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, testimonialIndex]);
+  }, [activeProductSlug, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, activeNewArrivalsPage]);
 
   useEffect(() => {
     if (!statsGridRef.current || statsActive) return undefined;
@@ -561,7 +627,7 @@ function App() {
 
     observer.observe(statsGridRef.current);
     return () => observer.disconnect();
-  }, [activeAboutPage, activeAchievementPage, activeClientPage, activeGalleryPage, activeProductPage, statsActive]);
+  }, [activeAboutPage, activeAchievementPage, activeClientPage, activeGalleryPage, activeNewArrivalsPage, activeProductPage, statsActive]);
 
   useEffect(() => {
     const syncRoute = () => {
@@ -570,6 +636,7 @@ function App() {
       setActiveAboutPage(getAboutRouteFromHash());
       setActiveAchievementPage(getAchievementRouteFromHash());
       setActiveGalleryPage(getGalleryRouteFromHash());
+      setActiveNewArrivalsPage(getNewArrivalsRouteFromHash());
       setMenuOpen(false);
       setProductMenuOpen(false);
     };
@@ -593,9 +660,11 @@ function App() {
             ? "Achievements | Smart Buddy"
             : activeGalleryPage
               ? "Gallery | Smart Buddy"
-              : "Smart Buddy | Aarya Innovtech";
+              : activeNewArrivalsPage
+                ? "New Arrivals | Smart Buddy"
+                : "Smart Buddy | Aarya Innovtech";
     window.scrollTo({ top: 0, behavior: "auto" });
-  }, [activeProductPage, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage]);
+  }, [activeProductPage, activeClientPage, activeAboutPage, activeAchievementPage, activeGalleryPage, activeNewArrivalsPage]);
 
   useEffect(() => {
     document.body.style.overflow = selectedProduct || selectedMedia ? "hidden" : "";
@@ -651,13 +720,14 @@ function App() {
     setMenuOpen(false);
     setProductMenuOpen(false);
 
-    if (activeProductSlug || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage) {
+    if (activeProductSlug || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage || activeNewArrivalsPage) {
       window.history.pushState(null, "", `${window.location.pathname}${window.location.search}`);
       setActiveProductSlug(null);
       setActiveClientPage(false);
       setActiveAboutPage(false);
       setActiveAchievementPage(false);
       setActiveGalleryPage(false);
+      setActiveNewArrivalsPage(false);
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
           document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -674,6 +744,7 @@ function App() {
     setProductMenuOpen(false);
     setActiveAchievementPage(false);
     setActiveGalleryPage(false);
+    setActiveNewArrivalsPage(false);
 
     if (activeAboutPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -689,6 +760,7 @@ function App() {
     setActiveAboutPage(false);
     setActiveAchievementPage(false);
     setActiveGalleryPage(false);
+    setActiveNewArrivalsPage(false);
 
     if (activeClientPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -704,6 +776,7 @@ function App() {
     setActiveAboutPage(false);
     setActiveClientPage(false);
     setActiveGalleryPage(false);
+    setActiveNewArrivalsPage(false);
 
     if (activeAchievementPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -719,6 +792,7 @@ function App() {
     setActiveAboutPage(false);
     setActiveClientPage(false);
     setActiveAchievementPage(false);
+    setActiveNewArrivalsPage(false);
 
     if (activeGalleryPage) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -735,11 +809,29 @@ function App() {
     setActiveAboutPage(false);
     setActiveAchievementPage(false);
     setActiveGalleryPage(false);
+    setActiveNewArrivalsPage(false);
     if (activeProductSlug === slug) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     window.location.hash = `/products/${slug}`;
+  };
+
+  const navigateToNewArrivals = () => {
+    setMenuOpen(false);
+    setProductMenuOpen(false);
+    setActiveProductSlug(null);
+    setActiveClientPage(false);
+    setActiveAboutPage(false);
+    setActiveAchievementPage(false);
+    setActiveGalleryPage(false);
+
+    if (activeNewArrivalsPage) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    window.location.hash = "/new-arrivals";
   };
 
   const openProduct = (product) => {
@@ -760,10 +852,6 @@ function App() {
     if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
       setProductMenuOpen(false);
     }
-  };
-
-  const moveTestimonial = (direction) => {
-    setTestimonialIndex((current) => (current + direction + testimonials.length) % testimonials.length);
   };
 
   const moveHero = (direction) => {
@@ -803,7 +891,7 @@ function App() {
         </div>
       ) : null}
       <m.header
-        className={`site-header ${scrolled || activeAboutPage ? "is-scrolled" : ""}`}
+        className={`site-header ${scrolled || activeAboutPage || activeNewArrivalsPage ? "is-scrolled" : ""}`}
         variants={navbarVariants}
         initial={motionInitial}
         animate="visible"
@@ -811,7 +899,7 @@ function App() {
         <span className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
         <div className="topline">
           <div className="container topline-inner">
-            <p>Original Equipment Manufacturer of Special Purpose Machines in Hygiene Sector Since 2010</p>
+            <p>North Maharashtra's Fastest-Growing Startup, Leading India's Smart Eco Toilet Revolution.</p>
             <div className="topline-links">
               <a href="mailto:sales@smartbuddy.co.in">
                 <Mail size={14} /> sales@smartbuddy.co.in
@@ -826,9 +914,9 @@ function App() {
           <div className={`nav-links ${menuOpen ? "is-open" : ""}`} id="primary-navigation">
             {navLinks.slice(0, 1).map(([label, section]) => (
               <button
-                className={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section ? "is-active" : ""}
+                className={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && !activeNewArrivalsPage && activeSection === section ? "is-active" : ""}
                 onClick={() => scrollToSection(section)}
-                aria-current={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section ? "page" : undefined}
+                aria-current={!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && !activeNewArrivalsPage && activeSection === section ? "page" : undefined}
                 key={section}
               >
                 {label}
@@ -846,7 +934,7 @@ function App() {
               ref={productMenuRef}
             >
               <button
-                className={activeProductPage ? "is-active" : ""}
+                className={activeProductPage || activeNewArrivalsPage ? "is-active" : ""}
                 type="button"
                 onClick={() => setProductMenuOpen((open) => !open)}
                 aria-expanded={productMenuOpen}
@@ -869,6 +957,16 @@ function App() {
                     {product.navLabel} <ArrowRight size={14} />
                   </button>
                 ))}
+                <button
+                  className={activeNewArrivalsPage ? "is-active" : ""}
+                  type="button"
+                  onClick={() => {
+                    navigateToNewArrivals();
+                    productMenuButtonRef.current?.focus();
+                  }}
+                >
+                  New arrivals <Sparkles size={14} />
+                </button>
               </div>
             </div>
             {navLinks.slice(1).map(([label, section]) => (
@@ -882,7 +980,7 @@ function App() {
                       ? "is-active"
                     : section === "clients" && activeClientPage
                       ? "is-active"
-                      : !activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section
+                      : !activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && !activeNewArrivalsPage && activeSection === section
                         ? "is-active"
                         : ""
                 }
@@ -892,7 +990,7 @@ function App() {
                   (section === "achievements" && activeAchievementPage) ||
                   (section === "gallery" && activeGalleryPage) ||
                   (section === "clients" && activeClientPage) ||
-                  (!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && activeSection === section)
+                  (!activeProductPage && !activeClientPage && !activeAboutPage && !activeAchievementPage && !activeGalleryPage && !activeNewArrivalsPage && activeSection === section)
                     ? "page"
                     : undefined
                 }
@@ -941,6 +1039,8 @@ function App() {
               <AchievementPage onNavigateHome={scrollToSection} />
             ) : activeGalleryPage ? (
               <GalleryPage onNavigateHome={scrollToSection} onOpenMedia={setSelectedMedia} />
+            ) : activeNewArrivalsPage ? (
+              <NewArrivalsPage onNavigateHome={scrollToSection} />
             ) : (
               <>
           <section className="hero" id="home">
@@ -956,6 +1056,15 @@ function App() {
             />
           </div>
           <div className="hero-overlay" />
+          <div className="hero-mobile-product-bg" aria-hidden="true">
+            <img
+              src={heroFeaturedImages[featuredImageIndex].src}
+              alt=""
+              loading="eager"
+              decoding="async"
+              key={`mobile-hero-${heroFeaturedImages[featuredImageIndex].src}`}
+            />
+          </div>
           <div className="container hero-inner">
             <m.div className="hero-copy" variants={heroContainerVariants}>
               <m.span className="eyebrow light" variants={heroItemVariants}>
@@ -985,7 +1094,7 @@ function App() {
               <div className="hero-featured-product">
                 <div className="hero-featured-copy">
                   <span className="hero-featured-kicker"><Star size={13} /> Featured product</span>
-                  <h2>Smart ECO<br />Toilet</h2>
+                  <h2>Electronic ECO<br />Toilet</h2>
                   <i aria-hidden="true" />
                   <p>IoT-enabled, water-saving, self-sustaining public toilet solution for cleaner, greener communities.</p>
                 </div>
@@ -995,8 +1104,20 @@ function App() {
                   onClick={() => navigateToProduct(products[0].pageSlug)}
                   aria-label={`Open ${products[0].title}`}
                 >
-                  <span aria-hidden="true" />
-                  <img src={products[0].image} alt="" loading="eager" decoding="async" />
+                  <span className="hero-featured-glow" aria-hidden="true" />
+                  <span className="hero-featured-curtain" key={heroFeaturedImages[featuredImageIndex].src}>
+                    <img
+                      src={heroFeaturedImages[featuredImageIndex].src}
+                      alt={heroFeaturedImages[featuredImageIndex].alt}
+                      loading="eager"
+                      decoding="async"
+                    />
+                  </span>
+                  <span className="hero-featured-dots" aria-hidden="true">
+                    {heroFeaturedImages.map((image, index) => (
+                      <i className={index === featuredImageIndex ? "is-active" : ""} key={image.src} />
+                    ))}
+                  </span>
                 </button>
               </div>
               <div className="hero-product-strip" aria-label="Featured Smart Buddy products">
@@ -1307,41 +1428,55 @@ function App() {
         </section>
 
         <section className="section testimonials">
-          <div
-            className="container testimonial-grid"
-            onFocus={() => setTestimonialPaused(true)}
-            onBlur={() => setTestimonialPaused(false)}
-            onMouseEnter={() => setTestimonialPaused(true)}
-            onMouseLeave={() => setTestimonialPaused(false)}
-          >
+          <div className="container testimonial-grid">
             <div className="testimonial-title" data-reveal>
-              <span className="eyebrow"><MessageCircle size={15} /> Profile highlights</span>
-              <h2>Technology notes from the Smart Buddy profile.</h2>
-              <p>Key product statements from the PDF profile are summarized here for fast comparison.</p>
-              <div className="testimonial-controls">
-                <button onClick={() => moveTestimonial(-1)} aria-label="Previous testimonial"><ChevronLeft /></button>
-                <button onClick={() => moveTestimonial(1)} aria-label="Next testimonial"><ChevronRight /></button>
-              </div>
+              <span className="eyebrow"><MessageCircle size={15} /> Video testimonials</span>
+              <h2>Field feedback from Smart Buddy installations.</h2>
+              <p>Short client-side videos with simple, professional context from real project locations.</p>
             </div>
-            <m.article
-              className="testimonial-card"
-              data-reveal
-              aria-live="polite"
-              variants={carouselItemVariants}
-              initial={motionInitial}
-              animate="visible"
-              key={testimonialIndex}
-            >
-              <Quote size={42} />
-              <p>{testimonials[testimonialIndex].quote}</p>
-              <div>
-                <span className="avatar">{testimonials[testimonialIndex].name.charAt(0)}</span>
-                <div>
-                  <strong>{testimonials[testimonialIndex].name}</strong>
-                  <span>{testimonials[testimonialIndex].role}</span>
-                </div>
-              </div>
-            </m.article>
+            <div className="testimonial-list" aria-label="Smart Buddy video testimonials">
+              {testimonials.map((testimonial, index) => {
+                const testimonialName = testimonial.name || testimonial.title || `Client testimonial ${index + 1}`;
+                const testimonialInitial = String(testimonialName).trim().charAt(0) || "S";
+
+                return (
+                  <m.article
+                    className="testimonial-card testimonial-video-card"
+                    data-reveal
+                    variants={carouselItemVariants}
+                    initial={motionInitial}
+                    animate="visible"
+                    key={testimonial.video ?? testimonialName}
+                  >
+                    <div className="testimonial-video-shell">
+                      {testimonial.video ? (
+                        <video
+                          src={testimonial.video}
+                          controls
+                          playsInline
+                          preload="metadata"
+                          poster={testimonial.poster}
+                          aria-label={`${testimonialName} video`}
+                        />
+                      ) : (
+                        <div className="testimonial-video-fallback">
+                          <PlayCircle size={28} />
+                          <span>Video testimonial</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="testimonial-context">
+                      <span className="avatar">{testimonialInitial}</span>
+                      <div>
+                        <strong>{testimonialName}</strong>
+                        <p>{testimonial.quote ?? "Smart Buddy customer feedback and project highlight."}</p>
+                        <small>{testimonial.role ?? "Client feedback"}</small>
+                      </div>
+                    </div>
+                  </m.article>
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -1431,7 +1566,7 @@ function App() {
         </div>
         <div className="container footer-bottom">
           <p>(c) {new Date().getFullYear()} Aarya Innovtech. All rights reserved.</p>
-          <button onClick={() => activeProductPage || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection("home")} type="button">
+          <button onClick={() => activeProductPage || activeClientPage || activeAboutPage || activeAchievementPage || activeGalleryPage || activeNewArrivalsPage ? window.scrollTo({ top: 0, behavior: "smooth" }) : scrollToSection("home")} type="button">
             Back to top <ArrowUpRight size={14} />
           </button>
         </div>
